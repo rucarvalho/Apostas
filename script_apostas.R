@@ -6,7 +6,7 @@ options(scipen = 999) # configurando para retir a notação cientifica
 
 # Subindo base
 
-df <- read_excel("apos.xlsx")
+df <- read_excel("df_aposta.xlsx")
 
 ## Visão geral da base 
 
@@ -65,17 +65,6 @@ df %>%
        title = "Distribuição de 'crash' por grupo") +
   theme_minimal()
 
-# Construindo o mesmo gráfico  talvez excluir 
-# 
-# df %>% 
-#   filter(crash <= 2) %>% 
-#   ggplot(aes(x = crash)) +
-#   geom_histogram(bins = 10, fill = "red", color = "black") +
-#   scale_y_continuous(breaks = seq(0,20,2)) +
-#   labs(y = "Nº de apostas",
-#        x = "Valor do 'crash'",
-#        title = "Distribuição das apostas com 'crash' menor que 2 por valor do 'crash'") +
-#   theme_minimal() 
 
 # Criando um grupo mais detalhado para os crash menores que 2
 
@@ -137,7 +126,7 @@ df["grupo_aposta"] <- ifelse(df$ordem <= 15,"Da 1º a 15º",
 
 ordem_aposta <- df %>% 
   group_by(grupo_aposta) %>% 
-  summarise(media = mean(crash),
+  summarise(media = round(mean(crash),2),
             mediana = median(crash))
 
 # Calculo do Intervalo de confiança por grupo, repetir o comando para cada grupo
@@ -168,10 +157,10 @@ kruskal.test(df$crash~factor(df$grupo_aposta))
 caracteristicas <- df %>% 
   group_by(`valor apostado`) %>% 
   summarise(volume = n(),
-            media = mean(crash),
+            media = round(mean(crash),2),
             mediana = median(crash))
 
-# Calculo do Intervalo de confiança por grupo, repetir o comando para cada grupo
+# Calculo do Intervalo de confiança por grupo
 
 aposta_1 <- df %>% filter(`valor apostado` == 1)
 aposta_2 <- df %>% filter(`valor apostado` == 2)
@@ -196,12 +185,16 @@ apostas_05 <- df %>%
 
 apostas_05["prop"] <- (apostas_05$vol / sum(apostas_05$vol))*100 # Distribuição relativa das apostas por resultado
 
+apostas_05 # frequencia relativa e absoluta dos resultados da retirada antes de 1.05
+
 apostas_10 <- df %>% 
   filter(retirada == 1.10) %>% 
   group_by(ganho) %>% 
   summarise(vol = n())
 
 apostas_10["prop"] <- (apostas_10$vol / sum(apostas_10$vol))*100 # Distribuição relativa das apostas por resultado
+
+apostas_10 # frequencia relativa e absoluta dos resultados da retirada antes de 1.10
 
 apostas_15 <- df %>% 
   filter(retirada == 1.15) %>% 
@@ -210,4 +203,5 @@ apostas_15 <- df %>%
 
 apostas_15["prop"] <- (apostas_15$vol / sum(apostas_15$vol))*100 # Distribuição relativa das apostas por resultado
 
+apostas_15 # frequencia relativa e absoluta dos resultados da retirada antes de 1.10
 
